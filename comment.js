@@ -1,45 +1,22 @@
-// Create web server with express
+// Create web server with express framework
+// using a router
+// handling request get '/', get '/create' post '/create' get "/:id/delete"
+// get '/:id/edit' post '/:id/edit'
+// get '/:id' post '/:id'
+// get '/:id/like'
+
 const express = require('express');
-const app = express();
-const port = 3000;
+const router = express.Router();
+const commentController = require('../controllers/comment.controller');
 
-// Import commentModel
-const commentModel = require('./models/comment');
+router.get('/', commentController.getCommentList);
+router.get('/create', commentController.getCreateComment);
+router.post('/create', commentController.postCreateComment);
+router.get('/:id/delete', commentController.getDeleteComment);
+router.get('/:id/edit', commentController.getEditComment);
+router.post('/:id/edit', commentController.postEditComment);
+router.get('/:id', commentController.getComment);
+router.post('/:id', commentController.postComment);
+router.get('/:id/like', commentController.getLikeComment);
 
-// Middleware
-app.use(express.json());
-
-// Create a comment
-app.post('/comments', async (req, res) => {
-    const comment = await commentModel.create(req.body);
-    res.json({ comment });
-});
-
-// Get all comments
-app.get('/comments', async (req, res) => {
-    const comments = await commentModel.find();
-    res.json({ comments });
-});
-
-// Get a comment by ID
-app.get('/comments/:id', async (req, res) => {
-    const comment = await commentModel.findById(req.params.id);
-    res.json({ comment });
-});
-
-// Update a comment by ID
-app.put('/comments/:id', async (req, res) => {
-    const comment = await commentModel.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    res.json({ comment });
-});
-
-// Delete a comment by ID
-app.delete('/comments/:id', async (req, res) => {
-    const comment = await commentModel.findByIdAndDelete(req.params.id);
-    res.json({ comment });
-});
-
-// Start server
-app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-});
+module.exports = router;
